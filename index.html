@@ -2,420 +2,201 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nosson’s Stock HQ</title>
-  <meta name="description" content="Your personal dashboard for live-ish updates, insights, and logs for VTAK, APVO, HYFT." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📈</text></svg>">
-  <!-- Tailwind CSS -->
+  <title>Nosson Stock HQ — Live</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js for simple charts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <!-- html2canvas & jsPDF for snapshot export -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
-    /* Tweak Tailwind defaults for smooth cards */
-    .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,0.7); }
-    .dark .glass { background: rgba(17,24,39,0.6); }
-    .number-input::-webkit-outer-spin-button, .number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .number-input { -moz-appearance: textfield; }
+    .glass{backdrop-filter:blur(10px);background:rgba(255,255,255,.7)}
+    .dark .glass{background:rgba(15,23,42,.6)}
+    .shine{background:linear-gradient(110deg,rgba(255,255,255,.06),rgba(255,255,255,0) 42%,rgba(255,255,255,.1) 58%,rgba(255,255,255,0));background-size:200% 100%;animation:shine 7s linear infinite}
+    @keyframes shine{0%{background-position:120% 0}100%{background-position:-20% 0}}
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-100">
-  <div class="max-w-6xl mx-auto p-4 md:p-8">
-    <!-- Header -->
-    <header class="flex flex-col md:flex-row md:items-end gap-4 md:gap-6 mb-6">
-      <div class="flex-1">
-        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Nosson’s Stock HQ</h1>
-        <p class="text-sm md:text-base text-slate-500 dark:text-slate-400">Private dashboard for your tickers • VTAK · APVO · HYFT • Webull-style after-hours aware</p>
+  <div class="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
+    <header class="flex flex-col md:flex-row md:items-end gap-6 justify-between">
+      <div>
+        <h1 class="text-4xl font-extrabold">Nosson’s Stock HQ</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Live updates for VTAK • APVO • HYFT — uses Yahoo Finance public quote API (prefers AH/PM prices when present)</p>
       </div>
-      <div class="flex items-center gap-3">
-        <button id="toggleDark" class="px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 shadow">Toggle Dark</button>
-        <button id="exportPDF" class="px-3 py-2 rounded-xl bg-indigo-600 text-white shadow">Export PDF</button>
-        <button id="exportJSON" class="px-3 py-2 rounded-xl bg-emerald-600 text-white shadow">Export JSON</button>
-        <label class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 shadow cursor-pointer">
-          Import JSON <input id="importJSON" type="file" accept="application/json" class="hidden" />
-        </label>
+      <div class="flex gap-2">
+        <button id="darkBtn" class="px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">Toggle Dark</button>
+        <button id="resetBtn" class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Reset</button>
       </div>
-    </header><!-- Portfolio Config -->
-<section class="glass rounded-2xl shadow p-4 md:p-6 mb-6">
-  <h2 class="text-xl font-bold mb-4">Portfolio setup</h2>
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-    <div>
-      <label class="block text-xs uppercase tracking-wide mb-1">Ticker</label>
-      <input class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" value="VTAK" disabled />
+    </header><section class="glass shine rounded-2xl p-4 md:p-6 space-y-4">
+  <div class="flex flex-wrap items-center gap-4 justify-between">
+    <div class="flex items-baseline gap-3">
+      <div class="text-sm text-slate-500">Portfolio Total</div>
+      <div id="total" class="text-3xl font-bold tabular-nums">$—</div>
+      <div id="delta" class="text-sm"></div>
     </div>
-    <div>
-      <label class="block text-xs uppercase tracking-wide mb-1">Shares</label>
-      <input id="sharesVTAK" type="number" class="number-input w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" value="3" />
-    </div>
-    <div>
-      <label class="block text-xs uppercase tracking-wide mb-1">Latest Price (incl. AH/PM)</label>
-      <input id="priceVTAK" type="number" step="0.0001" class="number-input w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" placeholder="e.g. 2.43" />
-    </div>
-    <div class="text-right">
-      <button data-t="VTAK" class="quickAdd px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Add to feed</button>
+    <div class="flex items-center gap-3">
+      <label class="text-sm">Auto-refresh</label>
+      <select id="freq" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800">
+        <option value="60000">1 min</option>
+        <option value="300000" selected>5 min</option>
+        <option value="900000">15 min</option>
+      </select>
+      <button id="liveBtn" class="px-4 py-2 rounded-xl bg-emerald-600 text-white">Start</button>
+      <div id="liveStatus" class="text-sm text-slate-500">Idle</div>
     </div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mt-4">
-    <div>
-      <input class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" value="APVO" disabled />
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="rounded-xl bg-white dark:bg-slate-800 p-4 space-y-2">
+      <div class="flex items-center justify-between"><h3 class="font-semibold">VTAK</h3><span id="ms-VTAK" class="text-xs text-slate-500"></span></div>
+      <div class="text-2xl font-bold tabular-nums" id="px-VTAK">$—</div>
+      <div class="text-xs text-slate-500">Shares: <input id="sh-VTAK" type="number" class="w-20 px-2 py-1 rounded bg-slate-100 dark:bg-slate-700" value="3"/></div>
+      <div class="text-sm" id="val-VTAK">—</div>
     </div>
-    <div>
-      <input id="sharesAPVO" type="number" class="number-input w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" value="6" />
+    <div class="rounded-xl bg-white dark:bg-slate-800 p-4 space-y-2">
+      <div class="flex items-center justify-between"><h3 class="font-semibold">APVO</h3><span id="ms-APVO" class="text-xs text-slate-500"></span></div>
+      <div class="text-2xl font-bold tabular-nums" id="px-APVO">$—</div>
+      <div class="text-xs text-slate-500">Shares: <input id="sh-APVO" type="number" class="w-20 px-2 py-1 rounded bg-slate-100 dark:bg-slate-700" value="6"/></div>
+      <div class="text-sm" id="val-APVO">—</div>
     </div>
-    <div>
-      <input id="priceAPVO" type="number" step="0.0001" class="number-input w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" placeholder="e.g. 1.80" />
+    <div class="rounded-xl bg-white dark:bg-slate-800 p-4 space-y-2">
+      <div class="flex items-center justify-between"><h3 class="font-semibold">HYFT</h3><span id="ms-HYFT" class="text-xs text-slate-500"></span></div>
+      <div class="text-2xl font-bold tabular-nums" id="px-HYFT">$—</div>
+      <div class="text-xs text-slate-500">Shares: <input id="sh-HYFT" type="number" class="w-20 px-2 py-1 rounded bg-slate-100 dark:bg-slate-700" value="173"/></div>
+      <div class="text-sm" id="val-HYFT">—</div>
     </div>
-    <div class="text-right">
-      <button data-t="APVO" class="quickAdd px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Add to feed</button>
-    </div>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mt-4">
-    <div>
-      <input class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" value="HYFT" disabled />
-    </div>
-    <div>
-      <input id="sharesHYFT" type="number" class="number-input w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" value="173" />
-    </div>
-    <div>
-      <input id="priceHYFT" type="number" step="0.0001" class="number-input w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800" placeholder="e.g. 1.78" />
-    </div>
-    <div class="text-right">
-      <button data-t="HYFT" class="quickAdd px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Add to feed</button>
-    </div>
-  </div>
-  <div class="flex flex-wrap items-center gap-3 mt-4">
-    <button id="recalc" class="px-4 py-2 rounded-xl bg-indigo-600 text-white shadow">Recalculate Total</button>
-    <div id="totalValue" class="text-lg font-semibold"></div>
-    <div id="lastCalc" class="text-sm text-slate-500 dark:text-slate-400"></div>
-  </div>
-  <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Tip: paste Webull after-hours prices here to mirror your account’s value.</p>
-</section>
-
-<!-- Quick Notes -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-  <div class="glass rounded-2xl shadow p-4 md:p-6 md:col-span-2">
-    <h2 class="text-xl font-bold mb-3">Updates feed</h2>
-    <form id="updateForm" class="flex gap-3 mb-3">
-      <input id="updateText" class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-800" placeholder="Add an update, e.g. HYFT AH $1.78; watch 1.85 break; stop 1.66…" />
-      <button class="px-4 py-2 rounded-xl bg-emerald-600 text-white">Post</button>
-    </form>
-    <div id="updatesList" class="space-y-3"></div>
-  </div>
-  <div class="glass rounded-2xl shadow p-4 md:p-6">
-    <h2 class="text-xl font-bold mb-3">Watchlist ideas</h2>
-    <ul id="watchlist" class="space-y-2 text-sm"></ul>
-    <form id="watchForm" class="mt-3 flex gap-2">
-      <input id="watchInput" class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-800" placeholder="Add ticker under $10…" />
-      <button class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Add</button>
-    </form>
   </div>
 </section>
 
-<!-- Charts -->
-<section class="glass rounded-2xl shadow p-4 md:p-6 mb-6">
-  <h2 class="text-xl font-bold mb-4">Equity curve (portfolio value over time)</h2>
-  <canvas id="equityChart" height="140"></canvas>
-  <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Auto-updates when you press “Recalculate Total” or add a quick price update.</p>
-</section>
-
-<!-- Saved signals / levels -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-  <div class="glass rounded-2xl shadow p-4 md:p-6">
-    <h3 class="font-semibold mb-2">Key levels</h3>
-    <ul id="levels" class="text-sm space-y-1"></ul>
-    <form id="levelForm" class="mt-3 flex gap-2">
-      <input id="levelInput" class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-800" placeholder="e.g. HYFT resist 1.85 / support 1.66" />
-      <button class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Save</button>
-    </form>
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="lg:col-span-2 glass rounded-2xl p-4 md:p-6">
+    <h3 class="text-lg font-semibold mb-3">Updates Feed</h3>
+    <div id="feed" class="space-y-3"></div>
   </div>
-  <div class="glass rounded-2xl shadow p-4 md:p-6">
-    <h3 class="font-semibold mb-2">Playbook notes</h3>
-    <textarea id="playbook" class="w-full h-40 px-3 py-2 rounded-xl bg-white dark:bg-slate-800 text-sm" placeholder="Entries, stops, targets; psychology reminders from Trading in the Zone…"></textarea>
-    <div class="text-right mt-2 text-xs text-slate-500" id="playbookSaved">Not saved</div>
-  </div>
-  <div class="glass rounded-2xl shadow p-4 md:p-6">
-    <h3 class="font-semibold mb-2">Session checklist</h3>
-    <ul class="text-sm space-y-2" id="checklist">
-      <li><label class="flex items-center gap-2"><input type="checkbox"/> Pre-market: catalysts scanned</label></li>
-      <li><label class="flex items-center gap-2"><input type="checkbox"/> Levels marked (HOD/LOD, preH/ preL)</label></li>
-      <li><label class="flex items-center gap-2"><input type="checkbox"/> Risk defined (max loss)</label></li>
-      <li><label class="flex items-center gap-2"><input type="checkbox"/> First 15-min range respected</label></li>
-      <li><label class="flex items-center gap-2"><input type="checkbox"/> Stops honored / no averaging down</label></li>
-    </ul>
+  <div class="glass rounded-2xl p-4 md:p-6">
+    <h3 class="text-lg font-semibold mb-3">Equity Curve</h3>
+    <canvas id="eq" height="160"></canvas>
   </div>
 </section>
 
-<footer class="text-xs text-slate-500 dark:text-slate-400 pb-10">
-  Built for Nosson • Stores data locally on your device (no server). For best results, paste Webull after-hours/pre-market prices.
-</footer>
+<footer class="text-xs text-slate-500 text-center pb-8">Built for Nosson • Live quotes fetched from Yahoo Finance public endpoint. If blocked by CORS in your region, switch to Vercel function /api/quote (same JSON).</footer>
 
-  </div><script>
-// --- Simple local state ---
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => Array.from(document.querySelectorAll(s));
+  </div>  <div id="ticker" class="fixed bottom-0 left-0 right-0 bg-slate-900 text-white text-sm py-2 px-4 flex gap-6 overflow-x-auto">Loading…</div><script>
+const syms = ['VTAK','APVO','HYFT'];
 const state = {
   shares: { VTAK: 3, APVO: 6, HYFT: 173 },
-  prices: { VTAK: null, APVO: null, HYFT: null }, // use AH/PM when you have it
-  updates: [], // { ts, text }
-  watchlist: [],
-  levels: [],
-  equity: [], // { ts, total }
-  playbook: "",
+  prices: { VTAK: null, APVO: null, HYFT: null },
+  lastTotal: null,
+  history: [], // {t, total}
+  timer: null,
+  freq: 300000,
 };
 
-// Load from localStorage
-(function load() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('nosson_hq'));
-    if (saved && typeof saved === 'object') {
-      Object.assign(state, saved);
+// Persist
+function save(){ localStorage.setItem('nosson_live_v2', JSON.stringify({shares:state.shares, history:state.history})); }
+function load(){
+  const s = JSON.parse(localStorage.getItem('nosson_live_v2')||'null');
+  if(s){ state.shares = Object.assign(state.shares, s.shares||{}); state.history = s.history||[]; }
+  document.getElementById('sh-VTAK').value = state.shares.VTAK;
+  document.getElementById('sh-APVO').value = state.shares.APVO;
+  document.getElementById('sh-HYFT').value = state.shares.HYFT;
+}
+
+// UI helpers
+function $(id){return document.getElementById(id)}
+function fmt(n){return Number(n).toFixed(4)}
+function money(n){return `$${Number(n).toFixed(2)}`}
+
+// Fetch from Yahoo Finance public endpoint
+async function fetchQuotes(){
+  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${syms.join(',')}`;
+  const r = await fetch(url, {cache:'no-store'});
+  const j = await r.json();
+  const list = j.quoteResponse.result || [];
+  const bySym = {};
+  list.forEach(q=>{ bySym[q.symbol.toUpperCase()] = q; });
+  return syms.map(s=> bySym[s]||{symbol:s});
+}
+
+function choosePrice(q){
+  if(!q) return null;
+  if((q.marketState==='POST' || q.marketState==='POSTPOST') && q.postMarketPrice) return q.postMarketPrice;
+  if((q.marketState==='PRE' || q.marketState==='PREPRE') && q.preMarketPrice) return q.preMarketPrice;
+  return q.regularMarketPrice ?? q.ask ?? q.bid ?? q.previousClose ?? null;
+}
+
+async function refresh(){
+  try{
+    const quotes = await fetchQuotes();
+    let total = 0; const parts = [];
+    for(const q of quotes){
+      const s = (q.symbol||'').toUpperCase();
+      const px = choosePrice(q);
+      if(px!=null) state.prices[s]=px;
+      const shares = state.shares[s];
+      const val = (px||0) * (shares||0);
+      total += val;
+      $(`px-${s}`).textContent = px? money(px) : '$—';
+      $(`ms-${s}`).textContent = q.marketState || '';
+      $(`val-${s}`).textContent = `${shares} × ${px? money(px):'$—'} = ${money(val)}`;
+      parts.push(`${s} ${px? px.toFixed(2):'—'}`);
     }
-  } catch {}
-  // hydrate inputs
-  $('#sharesVTAK').value = state.shares.VTAK;
-  $('#sharesAPVO').value = state.shares.APVO;
-  $('#sharesHYFT').value = state.shares.HYFT;
-  if (state.prices.VTAK) $('#priceVTAK').value = state.prices.VTAK;
-  if (state.prices.APVO) $('#priceAPVO').value = state.prices.APVO;
-  if (state.prices.HYFT) $('#priceHYFT').value = state.prices.HYFT;
-  renderUpdates();
-  renderWatchlist();
-  renderLevels();
-  renderTotal();
-})();
-
-function persist() {
-  localStorage.setItem('nosson_hq', JSON.stringify(state));
+    $('#total').textContent = money(total);
+    if(state.lastTotal!=null){
+      const d = total - state.lastTotal;
+      const pct = state.lastTotal? (d/state.lastTotal*100):0;
+      $('#delta').textContent = `${d>=0?'+':''}${d.toFixed(2)} (${pct>=0?'+':''}${pct.toFixed(2)}%) since last`;
+      $('#delta').className = d>=0? 'text-green-600' : 'text-red-600';
+    }
+    state.lastTotal = total;
+    state.history.push({t:Date.now(), total:Number(total.toFixed(2))});
+    if(state.history.length>400) state.history.shift();
+    save();
+    appendFeed(`Auto • ${new Date().toLocaleTimeString()} → ${parts.join(' · ')} | Total ${money(total)}`);
+    drawChart();
+    drawTicker();
+  }catch(e){ appendFeed('Fetch error — falling back'); console.warn(e); }
 }
 
-// Dark mode
-$('#toggleDark').addEventListener('click', () => {
-  document.documentElement.classList.toggle('dark');
-  persist();
-});
-
-// Recalculate total
-$('#recalc').addEventListener('click', () => {
-  syncFromInputs();
-  addEquityPoint();
-  renderTotal();
-});
-
-function syncFromInputs() {
-  state.shares.VTAK = +$('#sharesVTAK').value || 0;
-  state.shares.APVO = +$('#sharesAPVO').value || 0;
-  state.shares.HYFT = +$('#sharesHYFT').value || 0;
-  state.prices.VTAK = n($('#priceVTAK').value);
-  state.prices.APVO = n($('#priceAPVO').value);
-  state.prices.HYFT = n($('#priceHYFT').value);
-  persist();
+function appendFeed(text){
+  const wrap = document.createElement('div');
+  wrap.className = 'bg-white dark:bg-slate-800 rounded-xl p-3 shadow';
+  wrap.textContent = text;
+  $('#feed').prepend(wrap);
+  const max = 150; const feed = $('#feed');
+  while(feed.children.length>max){ feed.lastChild.remove(); }
 }
 
-function n(x){ const v = parseFloat(x); return Number.isFinite(v) ? v : null; }
-
-function calcTotal(){
-  const { shares, prices } = state;
-  const vtak = (prices.VTAK ?? 0) * shares.VTAK;
-  const apvo = (prices.APVO ?? 0) * shares.APVO;
-  const hyft = (prices.HYFT ?? 0) * shares.HYFT;
-  return { vtak, apvo, hyft, total: vtak + apvo + hyft };
+let eqChart;
+function drawChart(){
+  const labels = state.history.map(p=> new Date(p.t).toLocaleTimeString());
+  const data = state.history.map(p=> p.total);
+  if(eqChart) eqChart.destroy();
+  eqChart = new Chart($('#eq'), {type:'line', data:{labels, datasets:[{label:'Total ($)', data, tension:.25}]}, options:{responsive:true, maintainAspectRatio:false}});
 }
 
-function renderTotal(){
-  const { vtak, apvo, hyft, total } = calcTotal();
-  $('#totalValue').textContent = `Total: $${total.toFixed(2)} (VTAK $${vtak.toFixed(2)} · APVO $${apvo.toFixed(2)} · HYFT $${hyft.toFixed(2)})`;
-  $('#lastCalc').textContent = `Last updated: ${new Date().toLocaleString()}`;
-  persist();
-  drawEquityChart();
+function drawTicker(){
+  const el = $('#ticker');
+  el.innerHTML = syms.map(s=>{
+    const px = state.prices[s];
+    return `<span class='font-semibold'>${s}</span> ${px? px.toFixed(2):'—'}`;
+  }).join('<span class="opacity-40"> | </span>');
 }
 
-function addEquityPoint(){
-  const { total } = calcTotal();
-  state.equity.push({ ts: Date.now(), total: Number(total.toFixed(2)) });
-  if (state.equity.length > 500) state.equity.shift();
-  persist();
-}
-
-// QuickAdd buttons to post a structured update from inputs
-$$('.quickAdd').forEach(btn => {
-  btn.addEventListener('click', () => {
-    syncFromInputs();
-    const t = btn.dataset.t;
-    const px = state.prices[t];
-    if (px == null) return;
-    const msg = `${t} price update: $${px.toFixed(4)} · shares ${state.shares[t]} · total $${(px*state.shares[t]).toFixed(2)}`;
-    pushUpdate(msg);
-    addEquityPoint();
-    renderTotal();
-  });
+// Controls
+['VTAK','APVO','HYFT'].forEach(s=>{
+  $(`sh-${s}`).addEventListener('input', (e)=>{ state.shares[s] = Number(e.target.value)||0; save(); refresh(); });
 });
 
-// Updates feed
-$('#updateForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const text = $('#updateText').value.trim();
-  if (!text) return;
-  pushUpdate(text);
-  $('#updateText').value = '';
+$('#darkBtn').addEventListener('click', ()=> document.documentElement.classList.toggle('dark'));
+$('#resetBtn').addEventListener('click', ()=>{ localStorage.removeItem('nosson_live_v2'); location.reload(); });
+
+$('#liveBtn').addEventListener('click', ()=>{
+  if(state.timer){ clearInterval(state.timer); state.timer=null; $('#liveBtn').textContent='Start'; $('#liveStatus').textContent='Idle'; return; }
+  state.freq = Number($('#freq').value)||300000;
+  state.timer = setInterval(refresh, state.freq);
+  $('#liveBtn').textContent='Stop';
+  $('#liveStatus').textContent=`Running every ${Math.round(state.freq/60000)} min`;
+  refresh();
 });
 
-function pushUpdate(text){
-  state.updates.unshift({ ts: Date.now(), text });
-  if (state.updates.length > 500) state.updates.pop();
-  persist();
-  renderUpdates();
-}
-
-function renderUpdates(){
-  const box = $('#updatesList');
-  box.innerHTML = '';
-  if (state.updates.length === 0){
-    box.innerHTML = `<div class="text-sm text-slate-500">No updates yet. Post one above – e.g. \"HYFT AH 1.78, watching 1.85 break, stop 1.66.\"</div>`;
-    return;
-  }
-  state.updates.forEach((u, i) => {
-    const li = document.createElement('div');
-    li.className = 'rounded-xl bg-white dark:bg-slate-800 p-3 shadow flex items-start gap-3';
-    li.innerHTML = `
-      <div class="text-xs text-slate-500 w-28 shrink-0">${new Date(u.ts).toLocaleString()}</div>
-      <div class="flex-1 text-sm">${escapeHtml(u.text)}</div>
-      <button class="text-xs text-red-500" data-i="${i}">Delete</button>
-    `;
-    li.querySelector('button').addEventListener('click', (ev) => {
-      const idx = +ev.target.dataset.i;
-      state.updates.splice(idx,1);
-      persist();
-      renderUpdates();
-    });
-    box.appendChild(li);
-  });
-}
-
-function escapeHtml(str){ return str.replace(/[&<>\"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
-
-// Watchlist
-$('#watchForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const v = $('#watchInput').value.trim().toUpperCase();
-  if(!v) return;
-  if(!state.watchlist.includes(v)) state.watchlist.push(v);
-  $('#watchInput').value = '';
-  persist();
-  renderWatchlist();
-});
-
-function renderWatchlist(){
-  const ul = $('#watchlist');
-  ul.innerHTML = '';
-  state.watchlist.forEach((t,i) => {
-    const li = document.createElement('li');
-    li.className = 'flex items-center justify-between bg-white dark:bg-slate-800 rounded-xl px-3 py-2 shadow';
-    li.innerHTML = `<span>${t}</span><button class='text-xs text-red-500' data-i='${i}'>Remove</button>`;
-    li.querySelector('button').addEventListener('click', (ev)=>{
-      state.watchlist.splice(+ev.target.dataset.i,1);
-      persist();
-      renderWatchlist();
-    });
-    ul.appendChild(li);
-  });
-}
-
-// Levels
-$('#levelForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const v = $('#levelInput').value.trim();
-  if(!v) return;
-  state.levels.unshift({ ts: Date.now(), text: v });
-  if (state.levels.length > 200) state.levels.pop();
-  $('#levelInput').value='';
-  persist();
-  renderLevels();
-});
-
-function renderLevels(){
-  const ul = $('#levels');
-  ul.innerHTML='';
-  state.levels.forEach((l,i)=>{
-    const li = document.createElement('li');
-    li.className = 'flex items-center justify-between';
-    li.innerHTML = `<span>${escapeHtml(l.text)}</span><button class='text-xs text-red-500' data-i='${i}'>Remove</button>`;
-    li.querySelector('button').addEventListener('click', (ev)=>{
-      state.levels.splice(+ev.target.dataset.i,1);
-      persist();
-      renderLevels();
-    });
-    ul.appendChild(li);
-  });
-}
-
-// Playbook autosave
-$('#playbook').value = state.playbook || '';
-$('#playbook').addEventListener('input', ()=>{
-  state.playbook = $('#playbook').value;
-  persist();
-  const el = $('#playbookSaved');
-  el.textContent = 'Saved ✓';
-  setTimeout(()=> el.textContent = 'Saved just now', 800);
-});
-
-// Charts
-let equityChart;
-function drawEquityChart(){
-  const ctx = document.getElementById('equityChart');
-  const labels = state.equity.map(p => new Date(p.ts).toLocaleTimeString());
-  const data = state.equity.map(p => p.total);
-  if (equityChart) equityChart.destroy();
-  equityChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{ label: 'Portfolio total ($)', data, tension: 0.25, fill: false }]
-    },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-}
-
-// Export JSON
-$('#exportJSON').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `nosson_stock_hq_${new Date().toISOString().slice(0,10)}.json`;
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-});
-
-// Import JSON
-$('#importJSON').addEventListener('change', async (e) => {
-  const file = e.target.files?.[0];
-  if(!file) return;
-  const txt = await file.text();
-  try {
-    const obj = JSON.parse(txt);
-    Object.assign(state, obj);
-    persist();
-    location.reload();
-  } catch(err){ alert('Invalid JSON'); }
-});
-
-// Export PDF (screenshot)
-$('#exportPDF').addEventListener('click', async () => {
-  const { jsPDF } = window.jspdf;
-  const node = document.body;
-  const canvas = await html2canvas(node, { scale: 2, backgroundColor: getComputedStyle(document.body).backgroundColor });
-  const imgData = canvas.toDataURL('image/png');
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const imgProps = { w: pageWidth, h: canvas.height * (pageWidth / canvas.width) };
-  let y = 0;
-  while (y < imgProps.h) {
-    pdf.addImage(imgData, 'PNG', 0, 0 - y, imgProps.w, imgProps.h);
-    if (y + pageHeight < imgProps.h) pdf.addPage();
-    y += pageHeight;
-  }
-  pdf.save(`Nosson_Stock_HQ_${new Date().toISOString().slice(0,10)}.pdf`);
-});
+// Init
+load();
+refresh();
 </script></body>
 </html>
