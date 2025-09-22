@@ -1,38 +1,48 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Nosson Stock HQ — Neon Pro v4</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Nosson Stock HQ — Signature v5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-  :root{ --bg:#070a14; --panel:#0b1220; --glass:rgba(17,24,39,.45); --cyan:#22d3ee; --pink:#f472b6; --green:#22c55e; --red:#ef4444; }
-  body{ font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial; }
-  .mono{ font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas; }
-  .gridbg{ background-image: radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px); background-size: 18px 18px; }
-  .neon-card{ backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 30px rgba(34,211,238,.15) inset; }
-  .glow{ box-shadow: 0 0 0 1px rgba(34,211,238,.35), 0 10px 35px rgba(34,211,238,.12); }
+  :root{ --bg:#070a14; --grid:rgba(255,255,255,.04); --glass:rgba(17,24,39,.5); --cyan:#22d3ee; --pink:#f472b6; --emerald:#22c55e; --rose:#ef4444; }
+  body{ font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:radial-gradient(950px 950px at -10% -10%, rgba(34,211,238,.14), transparent 60%), radial-gradient(900px 900px at 110% 10%, rgba(244,114,182,.12), transparent 60%), var(--bg); }
+  .mono{ font-family:'JetBrains Mono',ui-monospace,Consolas,Menlo; }
+  .gridbg{ background-image: radial-gradient(var(--grid) 1px, transparent 1px); background-size: 18px 18px; }
+  .neon{ backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 28px rgba(34,211,238,.12) inset; }
+  .grad-border{ position:relative; }
+  .grad-border:before{ content:""; position:absolute; inset:-1px; border-radius:1rem; padding:1px; background:linear-gradient(135deg, rgba(34,211,238,.6), rgba(244,114,182,.6)); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite: exclude; pointer-events:none; }
   .btn{ transition: transform .15s ease, box-shadow .2s ease; }
   .btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 25px rgba(34,211,238,.25); }
   .shine{ background: linear-gradient(110deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%, rgba(255,255,255,.15) 60%, rgba(255,255,255,0)); background-size: 200% 100%; animation: shine 7s linear infinite; }
   @keyframes shine{ 0%{background-position:120% 0} 100%{background-position:-20% 0} }
-  .ticker{ white-space: nowrap; animation: ticker 26s linear infinite; }
+  .ticker{ white-space:nowrap; animation: ticker 26s linear infinite; }
   @keyframes ticker{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
   .blurball{ filter: blur(80px); opacity:.35; }
   .pill{ border:1px solid rgba(255,255,255,.08); }
+  .tilt{ transform-style:preserve-3d; transition:transform .15s ease; }
+  .tilt:hover{ transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-2px); }
 </style>
 </head>
-<body class="min-h-screen text-slate-100" style="background:radial-gradient(1000px 1000px at -10% -10%, rgba(34,211,238,.15), transparent 60%), radial-gradient(900px 900px at 110% 10%, rgba(244,114,182,.12), transparent 60%), var(--bg)">  <!-- Ambient blobs -->  <div class="pointer-events-none fixed inset-0 -z-10 gridbg"></div>
-  <div class="pointer-events-none fixed -top-32 -left-24 w-80 h-80 rounded-full bg-cyan-400 blurball -z-10"></div>
-  <div class="pointer-events-none fixed -bottom-24 right-0 w-96 h-96 rounded-full bg-pink-400 blurball -z-10"></div>  <div class="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
+<body class="text-slate-100">
+  <!-- Ambient grid -->
+  <div class="fixed inset-0 -z-10 gridbg"></div>
+  <div class="fixed -top-32 -left-24 w-80 h-80 rounded-full bg-cyan-400 blurball -z-10"></div>
+  <div class="fixed -bottom-24 right-0 w-96 h-96 rounded-full bg-pink-400 blurball -z-10"></div>
+
+  <div class="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
     <!-- HERO -->
     <header class="flex flex-col xl:flex-row xl:items-end gap-6 justify-between">
       <div>
-        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight"><span class="bg-gradient-to-r from-cyan-300 via-white to-pink-300 bg-clip-text text-transparent">Nosson’s Stock HQ</span></h1>
-        <p class="text-sm text-slate-400">Neon‑grade dashboard • AH/PM‑aware • /api/quote proxy • smooth motion • odometer counters</p>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+          <span class="bg-gradient-to-r from-cyan-300 via-white to-pink-300 bg-clip-text text-transparent">Nosson’s Stock HQ</span>
+        </h1>
+        <p class="text-sm text-slate-400">Signature Edition • AH/PM aware • /api/quote proxy • sparklines • motion • market-hours scheduler</p>
       </div>
       <div class="flex flex-wrap gap-2 items-center">
         <button id="darkBtn" class="btn px-3 py-2 rounded-xl bg-slate-900 text-white pill">Theme</button>
@@ -41,176 +51,329 @@
         <label class="btn px-3 py-2 rounded-xl bg-slate-800 cursor-pointer">Import JSON<input id="importFile" type="file" accept="application/json" class="hidden"/></label>
         <button id="resetBtn" class="btn px-3 py-2 rounded-xl bg-rose-500 text-slate-900 font-semibold">Reset</button>
       </div>
-    </header><!-- KPI / Controls -->
-<section class="neon-card rounded-2xl p-5 md:p-7 shine">
-  <div class="flex flex-wrap items-center justify-between gap-6">
-    <div>
-      <div class="text-xs uppercase tracking-wider text-slate-400">Portfolio Total</div>
-      <div class="flex items-end gap-3">
-        <div id="total" class="text-5xl md:text-6xl font-extrabold mono">$—</div>
-        <div id="delta" class="text-sm pb-2"></div>
-      </div>
-    </div>
-    <div class="flex items-center gap-3">
-      <span class="text-sm text-slate-400">Auto‑refresh</span>
-      <select id="freq" class="px-3 py-2 rounded-xl bg-slate-800 pill">
-        <option value="60000">1 min</option>
-        <option value="300000" selected>5 min</option>
-        <option value="900000">15 min</option>
-      </select>
-      <button id="liveBtn" class="btn px-4 py-2 rounded-xl bg-emerald-500 text-slate-900 font-semibold">Start</button>
-      <div class="text-sm text-slate-400" id="liveStatus">Idle</div>
-      <div class="text-xs text-slate-500" id="countdown"></div>
-    </div>
-  </div>
+    </header>
 
-  <!-- Positions -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-    <!-- Tile template repeated for each symbol -->
-    <div class="rounded-2xl p-4 bg-slate-900/40 border border-white/10 glow">
-      <div class="flex items-center justify-between mb-1"><h3 class="font-semibold">VTAK</h3><span id="ms-VTAK" class="text-[11px] text-slate-400"></span></div>
-      <div class="text-3xl font-extrabold mono" id="px-VTAK">$—</div>
-      <div class="text-xs text-slate-400 mt-1">Shares:</div>
-      <div class="flex items-center gap-2 mt-1">
-        <input id="sh-VTAK" type="number" class="w-24 px-2 py-1 rounded bg-slate-800 pill" value="3"/>
-        <span class="text-sm" id="val-VTAK">—</span>
-      </div>
-    </div>
-    <div class="rounded-2xl p-4 bg-slate-900/40 border border-white/10 glow">
-      <div class="flex items-center justify-between mb-1"><h3 class="font-semibold">APVO</h3><span id="ms-APVO" class="text-[11px] text-slate-400"></span></div>
-      <div class="text-3xl font-extrabold mono" id="px-APVO">$—</div>
-      <div class="text-xs text-slate-400 mt-1">Shares:</div>
-      <div class="flex items-center gap-2 mt-1">
-        <input id="sh-APVO" type="number" class="w-24 px-2 py-1 rounded bg-slate-800 pill" value="6"/>
-        <span class="text-sm" id="val-APVO">—</span>
-      </div>
-    </div>
-    <div class="rounded-2xl p-4 bg-slate-900/40 border border-white/10 glow">
-      <div class="flex items-center justify-between mb-1"><h3 class="font-semibold">HYFT</h3><span id="ms-HYFT" class="text-[11px] text-slate-400"></span></div>
-      <div class="text-3xl font-extrabold mono" id="px-HYFT">$—</div>
-      <div class="text-xs text-slate-400 mt-1">Shares:</div>
-      <div class="flex items-center gap-2 mt-1">
-        <input id="sh-HYFT" type="number" class="w-24 px-2 py-1 rounded bg-slate-800 pill" value="173"/>
-        <span class="text-sm" id="val-HYFT">—</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- GRID -->
-<section class="grid grid-cols-1 2xl:grid-cols-3 gap-6">
-  <div class="2xl:col-span-2 space-y-6">
-    <div class="neon-card rounded-2xl p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-lg font-semibold">Updates Feed</h3>
-        <div class="flex items-center gap-2">
-          <input id="noteInput" placeholder="Add a note (e.g., HYFT watch 1.85; stop 1.66)" class="px-3 py-2 rounded-xl bg-slate-800 pill w-72"/>
-          <button id="addNote" class="btn px-3 py-2 rounded-xl bg-slate-200/10 pill">Post</button>
+    <!-- KPI / Controls -->
+    <section class="neon rounded-2xl p-5 md:p-7 shine grad-border">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+        <div>
+          <div class="text-xs uppercase tracking-wider text-slate-400">Portfolio Total</div>
+          <div class="flex items-end gap-3">
+            <div id="total" class="text-5xl md:text-6xl font-extrabold mono">$—</div>
+            <div id="delta" class="text-sm pb-2"></div>
+          </div>
+          <div class="text-xs text-slate-500 mt-1" id="sessionInfo">Scheduler: OFF</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-slate-400">Auto-refresh</span>
+          <select id="freq" class="px-3 py-2 rounded-xl bg-slate-800 pill">
+            <option value="60000">1 min</option>
+            <option value="300000" selected>5 min</option>
+            <option value="900000">15 min</option>
+          </select>
+          <button id="liveBtn" class="btn px-4 py-2 rounded-xl bg-emerald-500 text-slate-900 font-semibold">Start</button>
+          <div id="liveStatus" class="text-sm text-slate-400">Idle</div>
+          <div id="countdown" class="text-xs text-slate-500"></div>
         </div>
       </div>
-      <div id="feed" class="space-y-3 max-h-[46vh] overflow-auto"></div>
-    </div>
-    <div class="neon-card rounded-2xl p-5">
-      <h3 class="text-lg font-semibold mb-3">Equity Curve</h3>
-      <canvas id="eq" height="210"></canvas>
-    </div>
-  </div>
-  <div class="space-y-6">
-    <div class="neon-card rounded-2xl p-5">
-      <h3 class="text-lg font-semibold mb-3">Insights</h3>
-      <ul id="insights" class="text-sm space-y-1"></ul>
-    </div>
-    <div class="neon-card rounded-2xl p-5">
-      <h3 class="text-lg font-semibold mb-3">Key Levels</h3>
-      <ul id="levels" class="text-sm space-y-2"></ul>
-      <div class="mt-2 flex gap-2">
-        <input id="levelInput" placeholder="e.g., HYFT R 1.85 / S 1.66" class="flex-1 px-3 py-2 rounded-xl bg-slate-800 pill"/>
-        <button id="addLevel" class="btn px-3 py-2 rounded-xl bg-slate-200/10 pill">Save</button>
-      </div>
-    </div>
-    <div class="neon-card rounded-2xl p-5">
-      <h3 class="text-lg font-semibold mb-3">Watchlist (under $10)</h3>
-      <ul id="watch" class="text-sm space-y-2"></ul>
-      <div class="mt-2 flex gap-2">
-        <input id="watchInput" placeholder="Add ticker…" class="flex-1 px-3 py-2 rounded-xl bg-slate-800 pill"/>
-        <button id="addWatch" class="btn px-3 py-2 rounded-xl bg-slate-200/10 pill">Add</button>
-      </div>
-    </div>
-  </div>
-</section>
 
-<footer class="text-xs text-slate-400 text-center pb-10">Built for Nosson · Frontend tries <code>/api/quote</code> (Vercel) first, then Yahoo.</footer>
+      <!-- Market-hours scheduler -->
+      <div class="mt-4 flex flex-wrap items-center gap-3 text-sm">
+        <label class="flex items-center gap-2">
+          <input id="schedToggle" type="checkbox" class="accent-cyan-400"/>
+          Only run during US market hours (9:30–16:00 ET)
+        </label>
+        <span class="text-slate-500">• Tab visibility pause is always on</span>
+      </div>
 
-  </div>  <!-- Pro ticker -->  <div class="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur border-t border-white/10">
+      <!-- Positions -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        <!-- card -->
+        <div class="tilt rounded-2xl p-4 bg-slate-900/40 border border-white/10">
+          <div class="flex items-center justify-between mb-1"><h3 class="font-semibold">VTAK</h3><span id="ms-VTAK" class="text-[11px] text-slate-400"></span></div>
+          <div class="text-3xl font-extrabold mono" id="px-VTAK">$—</div>
+          <div class="h-8"><canvas id="spark-VTAK"></canvas></div>
+          <div class="text-xs text-slate-400 mt-1">Shares:</div>
+          <div class="flex items-center gap-2 mt-1">
+            <input id="sh-VTAK" type="number" class="w-24 px-2 py-1 rounded bg-slate-800 pill" value="3"/>
+            <span class="text-sm" id="val-VTAK">—</span>
+          </div>
+        </div>
+        <div class="tilt rounded-2xl p-4 bg-slate-900/40 border border-white/10">
+          <div class="flex items-center justify-between mb-1"><h3 class="font-semibold">APVO</h3><span id="ms-APVO" class="text-[11px] text-slate-400"></span></div>
+          <div class="text-3xl font-extrabold mono" id="px-APVO">$—</div>
+          <div class="h-8"><canvas id="spark-APVO"></canvas></div>
+          <div class="text-xs text-slate-400 mt-1">Shares:</div>
+          <div class="flex items-center gap-2 mt-1">
+            <input id="sh-APVO" type="number" class="w-24 px-2 py-1 rounded bg-slate-800 pill" value="6"/>
+            <span class="text-sm" id="val-APVO">—</span>
+          </div>
+        </div>
+        <div class="tilt rounded-2xl p-4 bg-slate-900/40 border border-white/10">
+          <div class="flex items-center justify-between mb-1"><h3 class="font-semibold">HYFT</h3><span id="ms-HYFT" class="text-[11px] text-slate-400"></span></div>
+          <div class="text-3xl font-extrabold mono" id="px-HYFT">$—</div>
+          <div class="h-8"><canvas id="spark-HYFT"></canvas></div>
+          <div class="text-xs text-slate-400 mt-1">Shares:</div>
+          <div class="flex items-center gap-2 mt-1">
+            <input id="sh-HYFT" type="number" class="w-24 px-2 py-1 rounded bg-slate-800 pill" value="173"/>
+            <span class="text-sm" id="val-HYFT">—</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRID -->
+    <section class="grid grid-cols-1 2xl:grid-cols-3 gap-6">
+      <div class="2xl:col-span-2 space-y-6">
+        <div class="neon rounded-2xl p-5 grad-border">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold">Updates Feed</h3>
+            <div class="flex items-center gap-2">
+              <input id="noteInput" placeholder="Add a note (e.g., HYFT watch 1.85; stop 1.66)" class="px-3 py-2 rounded-xl bg-slate-800 pill w-72"/>
+              <button id="addNote" class="btn px-3 py-2 rounded-xl bg-slate-200/10 pill">Post</button>
+            </div>
+          </div>
+          <div id="feed" class="space-y-3 max-h-[46vh] overflow-auto"></div>
+        </div>
+        <div class="neon rounded-2xl p-5 grad-border">
+          <h3 class="text-lg font-semibold mb-3">Equity Curve</h3>
+          <canvas id="eq" height="220"></canvas>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="neon rounded-2xl p-5 grad-border">
+          <h3 class="text-lg font-semibold mb-3">Insights</h3>
+          <ul id="insights" class="text-sm space-y-1"></ul>
+        </div>
+        <div class="neon rounded-2xl p-5 grad-border">
+          <h3 class="text-lg font-semibold mb-3">Key Levels</h3>
+          <ul id="levels" class="text-sm space-y-2"></ul>
+          <div class="mt-2 flex gap-2">
+            <input id="levelInput" placeholder="e.g., HYFT R 1.85 / S 1.66" class="flex-1 px-3 py-2 rounded-xl bg-slate-800 pill"/>
+            <button id="addLevel" class="btn px-3 py-2 rounded-xl bg-slate-200/10 pill">Save</button>
+          </div>
+        </div>
+        <div class="neon rounded-2xl p-5 grad-border">
+          <h3 class="text-lg font-semibold mb-3">Watchlist (under $10)</h3>
+          <ul id="watch" class="text-sm space-y-2"></ul>
+          <div class="mt-2 flex gap-2">
+            <input id="watchInput" placeholder="Add ticker…" class="flex-1 px-3 py-2 rounded-xl bg-slate-800 pill"/>
+            <button id="addWatch" class="btn px-3 py-2 rounded-xl bg-slate-200/10 pill">Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="text-xs text-slate-400 text-center pb-10">Built for Nosson • Frontend tries <code>/api/quote</code> first, then Yahoo. Shortcuts: <b>S</b> start/stop, <b>D</b> theme, <b>N</b> new note, <b>L</b> add level.</footer>
+  </div>
+
+  <!-- Pro ticker -->
+  <div class="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur border-t border-white/10">
     <div id="ticker" class="ticker px-6 py-2 mono"></div>
-  </div><script>
-const syms = ['VTAK','APVO','HYFT'];
-const StoreKey = 'nosson_neon_v4';
-const state = { shares:{VTAK:3,APVO:6,HYFT:173}, prices:{}, history:[], feed:[], levels:[], watch:[], lastTotal:null, timer:null, nextAt:null, freq:300000 };
+  </div>
 
-// === helpers
-const $ = id=>document.getElementById(id);
-const money = n=>'$'+Number(n).toFixed(2);
-function animateNumber(el, from, to, duration=650){
-  const start = performance.now();
-  const step = (now)=>{
-    const p = Math.min(1, (now-start)/duration);
-    const val = from + (to-from)*p;
-    el.textContent = money(val);
-    if(p<1) requestAnimationFrame(step);
-  };
+<script>
+const syms = ['VTAK','APVO','HYFT'];
+const KEY = 'nosson_signature_v5';
+const state = {
+  shares:{VTAK:3,APVO:6,HYFT:173},
+  prices:{}, history:[], feed:[], levels:[], watch:[],
+  lastTotal:null, timer:null, nextAt:null, freq:300000,
+  scheduler:false
+};
+
+// ---------- helpers ----------
+const $ = id => document.getElementById(id);
+const money = n => '$'+Number(n).toFixed(2);
+function animateNumber(el, from, to, ms=600){
+  const t0 = performance.now();
+  const step = (t)=>{ const p=Math.min(1,(t-t0)/ms); el.textContent = money(from + (to-from)*p); if(p<1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
+function nowET(){
+  // crude ET offset (handles DST via Intl)
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone:'America/New_York', hour12:false, hour:'2-digit', minute:'2-digit' });
+  const [hh,mm] = fmt.format(new Date()).split(':').map(Number);
+  return {h:hh,m:mm};
+}
+function inMarketHours(){
+  const {h,m} = nowET();
+  const min = h*60+m;
+  return min>= (9*60+30) && min< (16*60); // 9:30 <= t < 16:00
+}
 
-// === persistence
-function save(){ localStorage.setItem(StoreKey, JSON.stringify({shares:state.shares, history:state.history, feed:state.feed, levels:state.levels, watch:state.watch})); }
-function load(){ try{ const s=JSON.parse(localStorage.getItem(StoreKey)||'null'); if(s){ Object.assign(state.shares,s.shares||{}); state.history=s.history||[]; state.feed=s.feed||[]; state.levels=s.levels||[]; state.watch=s.watch||[]; } }catch{}
-  ['VTAK','APVO','HYFT'].forEach(k=> $('sh-'+k).value = state.shares[k]); renderFeed(); renderLevels(); renderWatch(); drawChart(); }
+// ---------- persistence ----------
+function save(){ localStorage.setItem(KEY, JSON.stringify({shares:state.shares, history:state.history, feed:state.feed, levels:state.levels, watch:state.watch, scheduler:state.scheduler})); }
+function load(){
+  try{ const s=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(s){ Object.assign(state.shares,s.shares||{}); state.history=s.history||[]; state.feed=s.feed||[]; state.levels=s.levels||[]; state.watch=s.watch||[]; state.scheduler=!!s.scheduler; }
+  }catch{}
+  ['VTAK','APVO','HYFT'].forEach(k => $('sh-'+k).value = state.shares[k]);
+  $('schedToggle').checked = state.scheduler;
+  $('sessionInfo').textContent = state.scheduler ? 'Scheduler: ON (US market hours)' : 'Scheduler: OFF';
+  renderFeed(); renderLevels(); renderWatch(); drawChart();
+}
 
-// === data
+// ---------- data ----------
 async function fetchQuotes(){
   const symbols = syms.join(',');
   try{ const r = await fetch(`/api/quote?symbols=${symbols}`, {cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); }
-  catch{ const y = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`,{cache:'no-store'}); const j=await y.json(); return j.quoteResponse?.result||[]; }
+  catch{
+    const r = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`, {cache:'no-store'});
+    const j = await r.json(); return j.quoteResponse?.result || [];
+  }
 }
-function choosePrice(q){ const ms=q.marketState; if((ms==='POST'||ms==='POSTPOST')&&q.postMarketPrice) return q.postMarketPrice; if((ms==='PRE'||ms==='PREPRE')&&q.preMarketPrice) return q.preMarketPrice; return q.regularMarketPrice ?? q.ask ?? q.bid ?? q.previousClose ?? null; }
+function choosePrice(q){
+  const ms=q.marketState;
+  if((ms==='POST'||ms==='POSTPOST') && q.postMarketPrice) return q.postMarketPrice;
+  if((ms==='PRE'||ms==='PREPRE') && q.preMarketPrice) return q.preMarketPrice;
+  return q.regularMarketPrice ?? q.ask ?? q.bid ?? q.previousClose ?? null;
+}
 
-// === refresh
+// ---------- refresh ----------
 async function refresh(){
+  // Scheduler guard
+  if(state.scheduler && !inMarketHours()){ $('liveStatus').textContent='Paused (outside market hours)'; return; }
+
   const list = await fetchQuotes(); const by={}; list.forEach(q=>by[(q.symbol||'').toUpperCase()]=q);
   let total=0; const parts=[];
-  for(const s of syms){ const q=by[s]||{symbol:s}; const px=choosePrice(q); if(px!=null) state.prices[s]=px; const sh=state.shares[s]; const val=(px||0)*(sh||0); total+=val; $('px-'+s).textContent = px? money(px):'$—'; $('ms-'+s).textContent=q.marketState||''; $('val-'+s).textContent=`${sh} × ${px? money(px):'$—'} = ${money(val)}`; parts.push(`${s} ${px?px.toFixed(2):'—'}`); }
-  const totalEl=$('total'); const prev = state.lastTotal??total; animateNumber(totalEl, prev, total);
-  if(state.lastTotal!=null){ const d=total-state.lastTotal; const pct= state.lastTotal? d/state.lastTotal*100:0; const el=$('delta'); el.textContent=`${d>=0?'+':''}${d.toFixed(2)} (${pct>=0?'+':''}${pct.toFixed(2)}%) since last`; el.className=d>=0?'text-emerald-400':'text-rose-400'; if(Math.abs(pct)>=3 && 'Notification' in window && Notification.permission==='granted'){ new Notification(`Portfolio ${d>=0?'up':'down'} ${pct.toFixed(2)}%`,{body:`Total ${money(total)}`}); } }
-  state.lastTotal=total; state.history.push({t:Date.now(), total:Number(total.toFixed(2))}); if(state.history.length>700) state.history.shift(); save(); pushFeed(`Auto • ${new Date().toLocaleTimeString()} → ${parts.join(' · ')} | Total ${money(total)}`); drawChart(); drawTicker(); renderInsights(); }
+  for(const s of syms){
+    const q = by[s] || {symbol:s}; const px = choosePrice(q); if(px!=null) state.prices[s]=px;
+    const sh = state.shares[s]; const val = (px||0)*(sh||0); total += val;
+    $('px-'+s).textContent = px? money(px):'$—'; $('ms-'+s).textContent = q.marketState||''; $('val-'+s).textContent = `${sh} × ${px? money(px):'$—'} = ${money(val)}`;
+    parts.push(`${s} ${px? px.toFixed(2):'—'}`);
+    pushSpark(s, px); // update sparkline
+  }
+  const prev = state.lastTotal ?? total;
+  animateNumber($('total'), prev, total);
+  if(state.lastTotal!=null){
+    const d= total - state.lastTotal; const pct = state.lastTotal? d/state.lastTotal*100:0;
+    const el=$('delta'); el.textContent = `${d>=0?'+':''}${d.toFixed(2)} (${pct>=0?'+':''}${pct.toFixed(2)}%) since last`;
+    el.className = d>=0? 'text-emerald-400':'text-rose-400';
+    if(Math.abs(pct)>=3 && 'Notification' in window && Notification.permission==='granted'){
+      new Notification(`Portfolio ${d>=0?'up':'down'} ${pct.toFixed(2)}%`, { body:`Total ${money(total)}` });
+    }
+  }
+  state.lastTotal = total;
+  state.history.push({t:Date.now(), total:Number(total.toFixed(2))});
+  if(state.history.length>900) state.history.shift();
+  save();
+  pushFeed(`Auto • ${new Date().toLocaleTimeString()} → ${parts.join(' · ')} | Total ${money(total)}`);
+  drawChart(); drawTicker(); renderInsights();
+}
 
-// === feed/insights
-function pushFeed(text){ state.feed.unshift({t:Date.now(),text}); if(state.feed.length>220) state.feed.pop(); renderFeed(); save(); }
-function renderFeed(){ const box=$('feed'); box.innerHTML=''; if(!state.feed.length){ box.innerHTML='<div class="text-sm text-slate-400">No updates yet.</div>'; return;} state.feed.forEach(u=>{ const d=document.createElement('div'); d.className='rounded-xl p-3 bg-black/40 border border-white/10'; d.textContent=`[${new Date(u.t).toLocaleTimeString()}] ${u.text}`; box.appendChild(d); }); }
-function renderInsights(){ const ul=$('insights'); ul.innerHTML=''; const vals={}; let grand=0; for(const s of syms){ const v=(state.prices[s]||0)*(state.shares[s]||0); vals[s]=v; grand+=v;} const arr=Object.entries(vals).sort((a,b)=>b[1]-a[1]); if(!grand){ ul.innerHTML='<li>—</li>'; return;} const top=arr[0]; ul.innerHTML+=`<li>Top holding: <b>${top[0]}</b> ${money(top[1])} (${(top[1]/grand*100).toFixed(1)}%)</li>`; ul.innerHTML+=`<li>Concentration: ${arr.map(([k,v])=>`${k} ${(v/grand*100).toFixed(1)}%`).join(' · ')}</li>`; const last5=state.history.slice(-5).map(p=>money(p.total)).join(' → '); ul.innerHTML+=`<li>Last 5 totals: ${last5}</li>`; }
+// ---------- feed/insights ----------
+function pushFeed(text){ state.feed.unshift({t:Date.now(),text}); if(state.feed.length>250) state.feed.pop(); renderFeed(); save(); }
+function renderFeed(){
+  const box=$('feed'); box.innerHTML='';
+  if(!state.feed.length){ box.innerHTML='<div class="text-sm text-slate-400">No updates yet.</div>'; return; }
+  state.feed.forEach(u=>{
+    const d=document.createElement('div'); d.className='rounded-xl p-3 bg-black/40 border border-white/10';
+    d.textContent = `[${new Date(u.t).toLocaleTimeString()}] ${u.text}`;
+    box.appendChild(d);
+  });
+}
+function renderInsights(){
+  const ul=$('insights'); ul.innerHTML=''; const vals={}; let grand=0;
+  for(const s of syms){ const v=(state.prices[s]||0)*(state.shares[s]||0); vals[s]=v; grand+=v; }
+  const arr=Object.entries(vals).sort((a,b)=>b[1]-a[1]);
+  if(!grand){ ul.innerHTML='<li>—</li>'; return; }
+  const top=arr[0];
+  ul.innerHTML += `<li>Top holding: <b>${top[0]}</b> ${money(top[1])} (${(top[1]/grand*100).toFixed(1)}%)</li>`;
+  ul.innerHTML += `<li>Concentration: ${arr.map(([k,v])=>`${k} ${(v/grand*100).toFixed(1)}%`).join(' · ')}</li>`;
+  const last5 = state.history.slice(-5).map(p=>money(p.total)).join(' → ');
+  ul.innerHTML += `<li>Last 5 totals: ${last5}</li>`;
+}
 
-// === lists
-function renderLevels(){ const ul=$('levels'); ul.innerHTML=''; state.levels.forEach((t,i)=>{ const li=document.createElement('li'); li.className='flex justify-between'; li.innerHTML=`<span>${t}</span><button class='text-xs text-rose-400' data-i='${i}'>Remove</button>`; li.querySelector('button').onclick=()=>{state.levels.splice(i,1); renderLevels(); save();}; ul.appendChild(li); }); }
+// ---------- lists ----------
+function renderLevels(){ const ul=$('levels'); ul.innerHTML=''; state.levels.forEach((t,i)=>{ const li=document.createElement('li'); li.className='flex justify-between'; li.innerHTML=`<span>${t}</span><button class='text-xs text-rose-400'>Remove</button>`; li.querySelector('button').onclick=()=>{state.levels.splice(i,1); renderLevels(); save();}; ul.appendChild(li); }); }
 function renderWatch(){ const ul=$('watch'); ul.innerHTML=''; state.watch.forEach((t,i)=>{ const li=document.createElement('li'); li.className='flex justify-between'; li.innerHTML=`<span>${t}</span><button class='text-xs text-rose-400'>Remove</button>`; li.querySelector('button').onclick=()=>{state.watch.splice(i,1); renderWatch(); save();}; ul.appendChild(li); }); }
 
-// === chart & ticker
-let eqChart; function drawChart(){ const labels=state.history.map(p=>new Date(p.t).toLocaleTimeString()); const data=state.history.map(p=>p.total); if(eqChart) eqChart.destroy(); eqChart=new Chart($('eq'),{ type:'line', data:{ labels, datasets:[{ label:'Total ($)', data, tension:.25, borderWidth:2 }] }, options:{ responsive:true, maintainAspectRatio:false } }); }
-function drawTicker(){ const el=$('ticker'); el.innerHTML=[...syms,...state.watch].map(s=>`<span class='text-cyan-300'>${s}</span> <span class='mono'>${state.prices[s]?state.prices[s].toFixed(2):'—'}</span>`).join("<span class='mx-6 opacity-40'>|</span>"); el.innerHTML+=el.innerHTML; }
+// ---------- chart & ticker ----------
+let eqChart;
+function drawChart(){
+  const labels = state.history.map(p=> new Date(p.t).toLocaleTimeString());
+  const data = state.history.map(p=> p.total);
+  if(eqChart) eqChart.destroy();
+  eqChart = new Chart($('eq'), {
+    type:'line',
+    data:{ labels, datasets:[{ label:'Total ($)', data, tension:.25, borderWidth:2 }] },
+    options:{ responsive:true, maintainAspectRatio:false }
+  });
+}
+function drawTicker(){
+  const el=$('ticker');
+  const all=[...syms, ...state.watch];
+  el.innerHTML = all.map(s=>{
+    const px=state.prices[s]; const val = px? px.toFixed(2):'—';
+    return `<span class='text-cyan-300'>${s}</span> <span class='mono'>${val}</span>`;
+  }).join("<span class='mx-6 opacity-40'>|</span>");
+  el.innerHTML += el.innerHTML;
+}
 
-// === controls
+// ---------- mini sparklines ----------
+const sparkData = { VTAK:[], APVO:[], HYFT:[] };
+const sparkCharts = {};
+function pushSpark(sym, px){ if(px==null) return; const arr=sparkData[sym]; arr.push(Number(px)); if(arr.length>50) arr.shift(); drawSpark(sym); }
+function drawSpark(sym){
+  const el = $('spark-'+sym);
+  if(!el) return;
+  const data = sparkData[sym];
+  if(!sparkCharts[sym]){
+    sparkCharts[sym] = new Chart(el, {
+      type:'line',
+      data:{ labels:data.map((_,i)=>i), datasets:[{ data, tension:.3, borderWidth:1 }]},
+      options:{ responsive:true, maintainAspectRatio:false, scales:{x:{display:false}, y:{display:false}}, plugins:{legend:{display:false}, tooltip:{enabled:false}} }
+    });
+  } else {
+    const ch = sparkCharts[sym];
+    ch.data.labels = data.map((_,i)=>i);
+    ch.data.datasets[0].data = data;
+    ch.update();
+  }
+}
+
+// ---------- controls / shortcuts ----------
 ['VTAK','APVO','HYFT'].forEach(s=>{ $('sh-'+s).addEventListener('input',e=>{ state.shares[s]=Number(e.target.value)||0; save(); refresh(); }); });
-$('addNote').onclick=()=>{ const v=$('noteInput').value.trim(); if(!v) return; pushFeed(v); $('noteInput').value=''; };
-$('addLevel').onclick=()=>{ const v=$('levelInput').value.trim(); if(!v) return; state.levels.unshift(v); renderLevels(); save(); $('levelInput').value=''; };
-$('addWatch').onclick=()=>{ const v=$('watchInput').value.trim().toUpperCase(); if(!v) return; if(!state.watch.includes(v)) state.watch.push(v); renderWatch(); save(); $('watchInput').value=''; };
-$('darkBtn').onclick=()=> document.documentElement.classList.toggle('dark');
-$('resetBtn').onclick=()=>{ localStorage.removeItem(StoreKey); location.reload(); };
-$('notifyBtn').onclick=()=>{ if('Notification' in window && Notification.permission!=='granted') Notification.requestPermission(); };
-$('exportBtn').onclick=()=>{ const blob=new Blob([JSON.stringify({shares:state.shares,history:state.history,feed:state.feed,levels:state.levels,watch:state.watch},null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`nosson_neon_v4_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url); };
+$('addNote').onclick = ()=>{ const v=$('noteInput').value.trim(); if(!v) return; pushFeed(v); $('noteInput').value=''; };
+$('addLevel').onclick = ()=>{ const v=$('levelInput').value.trim(); if(!v) return; state.levels.unshift(v); renderLevels(); save(); $('levelInput').value=''; };
+$('addWatch').onclick = ()=>{ const v=$('watchInput').value.trim().toUpperCase(); if(!v) return; if(!state.watch.includes(v)) state.watch.push(v); renderWatch(); save(); $('watchInput').value=''; };
+$('darkBtn').onclick = ()=> document.documentElement.classList.toggle('dark');
+$('resetBtn').onclick = ()=>{ localStorage.removeItem(KEY); location.reload(); };
+$('notifyBtn').onclick = ()=>{ if('Notification' in window && Notification.permission!=='granted') Notification.requestPermission(); };
+$('schedToggle').onchange = (e)=>{ state.scheduler = e.target.checked; $('sessionInfo').textContent = state.scheduler ? 'Scheduler: ON (US market hours)' : 'Scheduler: OFF'; save(); };
 
-$('liveBtn').onclick=()=>{ if(state.timer){ clearInterval(state.timer); state.timer=null; $('liveBtn').textContent='Start'; $('liveStatus').textContent='Idle'; $('countdown').textContent=''; return;} state.freq=Number($('freq').value)||300000; $('liveBtn').textContent='Stop'; $('liveStatus').textContent=`Every ${Math.round(state.freq/60000)||1} min`; const tick=()=>{ refresh(); state.nextAt=Date.now()+state.freq; }; tick(); state.timer=setInterval(tick,state.freq); };
-setInterval(()=>{ if(!state.timer||!state.nextAt) return; const s=Math.max(0,Math.ceil((state.nextAt-Date.now())/1000)); $('countdown').textContent=`Next in ${s}s`; }, 1000);
+// start/stop
+$('liveBtn').onclick = ()=>{
+  if(state.timer){ stopLive(); return; }
+  startLive();
+};
+function startLive(){
+  state.freq = Number($('freq').value)||300000;
+  $('liveBtn').textContent='Stop';
+  $('liveStatus').textContent=`Every ${Math.round(state.freq/60000)||1} min`;
+  const tick=()=>{ if(document.hidden){ $('liveStatus').textContent='Paused (tab hidden)'; return; } refresh(); state.nextAt = Date.now()+state.freq; };
+  tick(); state.timer=setInterval(tick, state.freq);
+}
+function stopLive(){
+  clearInterval(state.timer); state.timer=null; $('liveBtn').textContent='Start'; $('liveStatus').textContent='Idle'; $('countdown').textContent='';
+}
+setInterval(()=>{ if(!state.timer||!state.nextAt) return; const s=Math.max(0, Math.ceil((state.nextAt-Date.now())/1000)); $('countdown').textContent = `Next in ${s}s`; }, 1000);
 
-// boot
+// keyboard shortcuts
+window.addEventListener('keydown', (e)=>{
+  if(e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA') return;
+  if(e.key.toLowerCase()==='s'){ $('liveBtn').click(); }
+  if(e.key.toLowerCase()==='d'){ $('darkBtn').click(); }
+  if(e.key.toLowerCase()==='n'){ $('noteInput').focus(); }
+  if(e.key.toLowerCase()==='l'){ $('levelInput').focus(); }
+});
+
+// pause when tab hidden (scheduler also checked inside refresh)
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) $('liveStatus').textContent='Paused (tab hidden)'; });
+
+// ---------- boot ----------
 load(); refresh();
-</script></body>
+</script>
+</body>
 </html>
